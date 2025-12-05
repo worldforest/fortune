@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>교육생 TMI & 행운지수</title></head>
+<body>
+    <h1>교육생 TMI</h1>
+    <ul>
+    {% for student in students %}
+        <li>{{ student.name }}: {{ student.tmi }}</li>
+    {% endfor %}
+    </ul>
+    
+    <h1>오늘의 행운지수: {{ luck_score }}점</h1>
+    <button onclick="fetch('/fortune').then(r=>r.text()).then(alert)">다시뽑기</button>
+</body>
+</html>
