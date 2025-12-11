@@ -109,6 +109,7 @@ Pygments==2.19.2
 PyJWT==2.10.1
 pyparsing==3.2.5
 python-dateutil==2.9.0.post0
+python-dotenv==1.2.1
 python-json-logger==4.0.0
 pytz==2025.2
 pywinpty==3.0.2
@@ -165,3 +166,6 @@ zope.hookable==8.1
 zope.interface==8.0.1
 zope.lifecycleevent==6.0
 zope.proxy==7.0
+gunicorn==21.2.0
+waitress==2.1.2
+google-generativeai==0.3.0

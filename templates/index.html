@@ -1,15 +1,703 @@
 <!DOCTYPE html>
 <html>
-<head><title>교육생 TMI & 행운지수</title></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍀 행운 점수 & TMI 🍀</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #dff7e0 0%, #fff9db 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        @font-face {
+            font-family: 'IsYun';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2202-2@1.0/LeeSeoyun.woff') format('woff');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .luck-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .luck-score {
+            font-size: 2.5em;
+            color: #3ea34b;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .luck-score .number {
+            font-size: 3.5em;
+            color: #7ccf6c;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #7ccf6c 0%, #ffd54a 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .fortune-message {
+            background: #fffdf0;
+            border-left: 4px solid #ffd54a;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            color: #333;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .students-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideUp 0.6s ease-out 0.2s backwards;
+        }
+
+        .students-section h2 {
+            color: #3ea34b;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .student-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .student-card {
+            background: linear-gradient(135deg, #7ccf6c 0%, #3ea34b 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            animation: pulse 0.5s ease-out;
+        }
+
+        .student-card .name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .add-student {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .add-student h3 {
+            color: #3ea34b;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .input-group input {
+            flex: 1;
+            min-width: 150px;
+            padding: 10px 15px;
+            border: 2px solid #7ccf6c;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #3ea34b;
+            box-shadow: 0 0 5px rgba(62,163,75,0.3);
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+        }
+
+        .success {
+            color: #27ae60;
+            margin-top: 10px;
+        }
+
+        /* TMI 게임 섹션 */
+        .game-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            animation: slideUp 0.6s ease-out 0.4s backwards;
+        }
+
+        .game-section h2 {
+            color: #3ea34b;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .tmi-display {
+            background: linear-gradient(135deg, #7ccf6c 0%, #3ea34b 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 1.3em;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .tmi-text {
+            font-weight: bold;
+        }
+
+        .choices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .choice-btn {
+            background: white;
+            border: 3px solid #7ccf6c;
+            color: #3ea34b;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .choice-btn:hover {
+            background: #f7fff2;
+            transform: translateY(-2px);
+        }
+
+        .choice-btn.selected {
+            background: #7ccf6c;
+            color: white;
+        }
+
+        .choice-btn.correct {
+            background: #27ae60;
+            border-color: #27ae60;
+            color: white;
+        }
+
+        .choice-btn.wrong {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: white;
+        }
+
+        .game-result {
+            font-size: 1.2em;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .game-result.show {
+            display: block;
+        }
+
+        .game-result.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #27ae60;
+        }
+
+        .game-result.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #e74c3c;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin: 0 5px;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+    </style>
+</head>
 <body>
-    <h1>교육생 TMI</h1>
-    <ul>
-    {% for student in students %}
-        <li>{{ student.name }}: {{ student.tmi }}</li>
-    {% endfor %}
-    </ul>
-    
-    <h1>오늘의 행운지수: {{ luck_score }}점</h1>
-    <button onclick="fetch('/fortune').then(r=>r.text()).then(alert)">다시뽑기</button>
+    <div class="container">
+        <div class="header">
+            <h1>🍀 오늘의 행운 🍀</h1>
+            <p>✨ 당신의 행운을 확인해보세요! ✨</p>
+            <div class="nav"><button class="btn" onclick="openAddStudentModal()" style="background: rgba(255,255,255,0.9); color: #3ea34b; border: 2px solid #3ea34b;">➕ 교육생 추가</button></div>
+        </div>
+
+        <div class="game-section">
+            <h2>🎯 누가 이 TMI의 주인공일까? 🎯</h2>
+            <p style="color: #999; margin-bottom: 20px;">게임을 시작해보세요!</p>
+            
+            <div id="gameContainer" style="display: none;">
+                <div class="tmi-display">
+                    <div class="tmi-text" id="tmiText"></div>
+                </div>
+                
+                <p style="color: #3ea34b; font-weight: bold; margin: 20px 0;">이 TMI의 주인공은 누구일까요?</p>
+                <div class="choices-grid" id="choicesGrid"></div>
+                
+                <div id="resultContainer">
+                    <div id="gameResult" class="game-result"></div>
+                </div>
+                
+                <button class="btn" onclick="startNewGame()" style="margin-top: 20px;">새 게임 시작</button>
+            </div>
+            
+            <div id="noGameMessage" style="color: #999; padding: 30px;">
+                교육생을 추가한 후 게임을 시작할 수 있습니다! 🍀
+            </div>
+        </div>
+
+        <div class="students-section">
+            <h2>👥 등록된 교육생 👥</h2>
+            <div style="text-align: center; padding: 20px;">
+                <p style="font-size: 1.5em; color: #3ea34b; font-weight: bold;">
+                    등록 인원: <span id="studentCount">0</span>명 / TMI: <span id="tmiCount">0</span>개
+                </p>
+            </div>
+        </div>
+
+        <div class="luck-section">
+            <h2>🎲 행운지수 🎲</h2>
+            <div class="luck-score">
+                <span class="number" id="luckScore">{{ luck_score }}</span>
+                <span>점</span>
+            </div>
+            <button class="btn" onclick="randomLuck()">🎯 다시 뽑기</button>
+            
+            <div class="fortune-message" id="fortuneMessage">
+                <p id="fortuneText">💚 행운의 메시지를 불러오는 중... 💚</p>
+            </div>
+            <button class="btn" onclick="getFortuneMessage()">📜 새로운 행운 메시지</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="addStudentModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAddStudentModal()">✕</button>
+            <h2 style="color: #3ea34b; margin-bottom: 20px;">➕ 교육생 추가</h2>
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="studentName" 
+                    placeholder="이름 (예: 김철수)"
+                >
+                <input 
+                    type="text" 
+                    id="studentTMI" 
+                    placeholder="TMI (예: 무모한 도전을 좋아함)"
+                >
+                <button class="btn" onclick="addStudent()">저장</button>
+            </div>
+            <div id="message"></div>
+        </div>
+    </div>
+
+    <script>
+        // 행운지수 랜덤 뽑기
+        function randomLuck() {
+            fetch('/api/random-luck')
+                .then(response => response.json())
+                .then(data => {
+                    const scoreElement = document.getElementById('luckScore');
+                    scoreElement.style.animation = 'none';
+                    setTimeout(() => {
+                        scoreElement.textContent = data.score;
+                        scoreElement.style.animation = 'pulse 0.5s ease-out';
+                        
+                        // Gemini가 생성한 메시지 표시
+                        const messageElement = document.getElementById('fortuneText');
+                        messageElement.textContent = data.message;
+                        
+                        // 게임 시작
+                        startNewGame();
+                    }, 10);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // 행운 메시지 조회
+        function getFortuneMessage() {
+            fetch('/api/fortune-message')
+                .then(response => response.json())
+                .then(data => {
+                    const messageElement = document.getElementById('fortuneText');
+                    messageElement.style.animation = 'none';
+                    setTimeout(() => {
+                        messageElement.textContent = data.message;
+                        messageElement.style.animation = 'slideIn 0.5s ease-out';
+                    }, 10);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // 교육생 추가
+        function addStudent() {
+            const nameInput = document.getElementById('studentName');
+            const tmiInput = document.getElementById('studentTMI');
+            const name = nameInput.value.trim();
+            const tmi = tmiInput.value.trim();
+            const messageDiv = document.getElementById('message');
+
+            if (!name || !tmi) {
+                messageDiv.innerHTML = '<p class="error">이름과 TMI를 모두 입력해주세요!</p>';
+                return;
+            }
+
+            fetch('/api/add-student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: name, tmi: tmi })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageDiv.innerHTML = '<p class="success">✓ 추가되었습니다!</p>';
+                    nameInput.value = '';
+                    tmiInput.value = '';
+                    
+                    // 학생 카드 추가
+                    const studentList = document.getElementById('studentList');
+                    const emptyMessage = studentList.querySelector('p');
+                    if (emptyMessage) {
+                        emptyMessage.remove();
+                    }
+                    
+                    const card = document.createElement('div');
+                    card.className = 'student-card';
+                    card.innerHTML = `<div class="name">${name}</div>`;
+                    studentList.appendChild(card);
+                    
+                    // 게임 시작 가능 표시 업데이트
+                    updateGameUI();
+                    
+                    // 통계 업데이트
+                    updateStudentStats();
+                    
+                    setTimeout(() => {
+                        messageDiv.innerHTML = '';
+                    }, 2000);
+                } else {
+                    messageDiv.innerHTML = '<p class="error">❌ 오류: ' + data.error + '</p>';
+                }
+            })
+            .catch(error => {
+                messageDiv.innerHTML = '<p class="error">❌ 오류가 발생했습니다!</p>';
+                console.error('Error:', error);
+            });
+        }
+
+        // 게임 시작
+        let currentGameData = null;
+
+        function startNewGame() {
+            fetch('/api/tmi-game')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        currentGameData = data;
+                        displayGame(data);
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('게임 시작에 실패했습니다!');
+                });
+        }
+
+        function displayGame(data) {
+            const gameContainer = document.getElementById('gameContainer');
+            const tmiText = document.getElementById('tmiText');
+            const choicesGrid = document.getElementById('choicesGrid');
+            const resultContainer = document.getElementById('resultContainer');
+            
+            tmiText.textContent = '🔒 ' + data.tmi + ' 🔒';
+            
+            // 선택지 버튼 생성
+            choicesGrid.innerHTML = '';
+            data.choices.forEach(choice => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.textContent = choice;
+                btn.onclick = () => selectAnswer(choice, btn);
+                choicesGrid.appendChild(btn);
+            });
+            
+            // 결과 초기화
+            resultContainer.innerHTML = '<div id="gameResult" class="game-result"></div>';
+            gameContainer.style.display = 'block';
+        }
+
+        function selectAnswer(selectedName, btn) {
+            const choiceBtns = document.querySelectorAll('.choice-btn');
+            choiceBtns.forEach(b => b.disabled = true);
+            
+            fetch('/api/check-answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    selected_name: selectedName,
+                    correct_name: currentGameData.correct_name
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 선택한 버튼 표시
+                btn.classList.add('selected');
+                
+                // 정답 버튼 표시
+                if (data.is_correct) {
+                    btn.classList.add('correct');
+                } else {
+                    btn.classList.add('wrong');
+                    // 정답 버튼도 표시
+                    choiceBtns.forEach(b => {
+                        if (b.textContent === data.correct_name) {
+                            b.classList.add('correct');
+                        }
+                    });
+                }
+                
+                // 결과 표시
+                const resultDiv = document.getElementById('gameResult');
+                resultDiv.className = `game-result show ${data.is_correct ? 'correct' : 'wrong'}`;
+                resultDiv.innerHTML = `<strong>${data.message}</strong>`;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function updateGameUI() {
+            fetch('/api/tmi-game')
+                .then(response => response.json())
+                .then(data => {
+                    const gameContainer = document.getElementById('gameContainer');
+                    const noGameMessage = document.getElementById('noGameMessage');
+                    
+                    if (data.success) {
+                        noGameMessage.style.display = 'none';
+                        gameContainer.style.display = 'block';
+                        // 게임 데이터 저장
+                        currentGameData = data;
+                        // 게임 데이터 표시
+                        document.getElementById('tmiText').textContent = '🔒 ' + data.tmi + ' 🔒';
+                        const choicesGrid = document.getElementById('choicesGrid');
+                        choicesGrid.innerHTML = '';
+                        const resultContainer = document.getElementById('resultContainer');
+                        resultContainer.innerHTML = '<div id="gameResult" class="game-result"></div>';
+                        
+                        data.choices.forEach((choice) => {
+                            const btn = document.createElement('button');
+                            btn.className = 'choice-btn';
+                            btn.textContent = choice;
+                            btn.onclick = () => selectAnswer(choice, btn);
+                            choicesGrid.appendChild(btn);
+                        });
+                    } else {
+                        noGameMessage.style.display = 'block';
+                        gameContainer.style.display = 'none';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('noGameMessage').style.display = 'block';
+                    document.getElementById('gameContainer').style.display = 'none';
+                });
+        }
+
+        // 교육생 및 TMI 통계 업데이트
+        function updateStudentStats() {
+            fetch('/api/student-stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('studentCount').textContent = data.student_count;
+                    document.getElementById('tmiCount').textContent = data.tmi_count;
+                })
+                .catch(error => console.error('Error fetching stats:', error));
+        }
+
+        // 초기 게임 UI 상태 확인
+        window.addEventListener('load', function() {
+            getFortuneMessage();
+            updateStudentStats();
+            updateGameUI();
+        });
+
+        // 모달 함수
+        function openAddStudentModal() {
+            document.getElementById('addStudentModal').classList.add('show');
+        }
+
+        function closeAddStudentModal() {
+            document.getElementById('addStudentModal').classList.remove('show');
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentTMI').value = '';
+            document.getElementById('message').innerHTML = '';
+        }
+
+        // 모달 배경 클릭하면 닫기
+        document.getElementById('addStudentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddStudentModal();
+            }
+        });
+    </script>
 </body>
 </html>

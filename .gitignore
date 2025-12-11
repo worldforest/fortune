@@ -8,5 +8,9 @@ venv/
 env/
 .env
 
+# Node
+node_modules/
+package-lock.json
+
 # Supabase 키 보호
 .env

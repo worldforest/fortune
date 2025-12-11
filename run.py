@@ -1,7 +1,9 @@
+import os
 from app import create_app
-from app.config import Config
+from waitress import serve
 
-app = create_app(Config)
+app = create_app()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 8000))
+    serve(app, host='0.0.0.0', port=port)
