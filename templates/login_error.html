@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>설정 오류 - Fortune</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;background:#fff6f6;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+    .card{background:#fff;padding:24px;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.08);max-width:640px}
+    h2{color:#c62828}
+    ul{color:#333}
+    .hint{margin-top:12px;color:#666;font-size:14px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>설정 오류: 네이버 OAuth가 구성되어 있지 않습니다</h2>
+    <p>다음 환경 변수가 필요합니다:</p>
+    <ul>
+      {% for item in missing %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+    <p class="hint">Render 또는 배포 환경의 서비스 설정에서 위 변수를 추가하세요. 예:</p>
+    <pre class="hint">NAVER_CLIENT_ID=your_client_id
+NAVER_CLIENT_SECRET=your_client_secret
+NAVER_REDIRECT_URI=https://your-domain.com/callback</pre>
+  </div>
+</body>
+</html>

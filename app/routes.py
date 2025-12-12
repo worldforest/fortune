@@ -121,10 +121,17 @@ def random_luck():
 # --- Naver OAuth routes ---
 @bp.route('/login')
 def login():
-    client_id = os.environ.get('NAVER_CLIENT_ID')
-    redirect_uri = os.environ.get('NAVER_REDIRECT_URI')
+    # Support both NAVER_CLIENT_ID and CLIENT_ID_NAVER env names (compatibility)
+    client_id = os.environ.get('NAVER_CLIENT_ID') or os.environ.get('CLIENT_ID_NAVER')
+    redirect_uri = os.environ.get('NAVER_REDIRECT_URI') or os.environ.get('NAVER_REDIRECT')
     if not client_id or not redirect_uri:
-        return "NAVER_CLIENT_ID or NAVER_REDIRECT_URI not configured", 500
+        # render friendly page explaining missing config instead of generic 500
+        missing = []
+        if not client_id:
+            missing.append('NAVER_CLIENT_ID or CLIENT_ID_NAVER')
+        if not redirect_uri:
+            missing.append('NAVER_REDIRECT_URI')
+        return render_template('login_error.html', missing=missing), 500
 
     state = secrets.token_urlsafe(16)
     session['naver_state'] = state
