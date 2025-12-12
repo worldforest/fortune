@@ -511,18 +511,6 @@
                     nameInput.value = '';
                     tmiInput.value = '';
                     
-                    // 학생 카드 추가
-                    const studentList = document.getElementById('studentList');
-                    const emptyMessage = studentList.querySelector('p');
-                    if (emptyMessage) {
-                        emptyMessage.remove();
-                    }
-                    
-                    const card = document.createElement('div');
-                    card.className = 'student-card';
-                    card.innerHTML = `<div class="name">${name}</div>`;
-                    studentList.appendChild(card);
-                    
                     // 게임 시작 가능 표시 업데이트
                     updateGameUI();
                     

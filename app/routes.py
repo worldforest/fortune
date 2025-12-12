@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, current_app, request, jsonify
+from flask import Blueprint, render_template, current_app, request, jsonify, session, redirect, url_for
 from datetime import date
 import random
 import os
 import google.generativeai as genai
+import httpx
+import secrets
 
 bp = Blueprint('main', __name__)
 
@@ -72,10 +74,13 @@ def get_default_message(score):
 @bp.route('/')
 def index():
     supabase = current_app.supabase
-    
+    # If user not logged in, show login screen
+    if not session.get('user'):
+        return render_template('login.html')
+
     # 교육생 TMI
     students = supabase.table('students').select('*').execute()
-    
+
     # 행운지수
     today = date.today().strftime('%Y-%m-%d')
     luck = supabase.table('luck_index').select('score').eq('date', today).execute()
@@ -85,7 +90,7 @@ def index():
         luck_score = score
     else:
         luck_score = luck.data[0]['score']
-    
+
     return render_template('index.html', 
                          students=students.data, 
                          luck_score=luck_score)
@@ -111,6 +116,72 @@ def random_luck():
     message = generate_message_by_score(score)
     
     return jsonify({'score': score, 'message': message})
+
+
+# --- Naver OAuth routes ---
+@bp.route('/login')
+def login():
+    client_id = os.environ.get('NAVER_CLIENT_ID')
+    redirect_uri = os.environ.get('NAVER_REDIRECT_URI')
+    if not client_id or not redirect_uri:
+        return "NAVER_CLIENT_ID or NAVER_REDIRECT_URI not configured", 500
+
+    state = secrets.token_urlsafe(16)
+    session['naver_state'] = state
+    auth_url = (
+        f"https://nid.naver.com/oauth2.0/authorize?response_type=code"
+        f"&client_id={client_id}&redirect_uri={redirect_uri}&state={state}"
+    )
+    return redirect(auth_url)
+
+
+@bp.route('/callback')
+def callback():
+    code = request.args.get('code')
+    state = request.args.get('state')
+    saved_state = session.pop('naver_state', None)
+    if state != saved_state:
+        return "Invalid state", 400
+
+    client_id = os.environ.get('NAVER_CLIENT_ID')
+    client_secret = os.environ.get('NAVER_CLIENT_SECRET')
+    redirect_uri = os.environ.get('NAVER_REDIRECT_URI')
+    token_url = 'https://nid.naver.com/oauth2.0/token'
+    params = {
+        'grant_type': 'authorization_code',
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'code': code,
+        'state': state
+    }
+    try:
+        r = httpx.get(token_url, params=params, timeout=10.0)
+        r.raise_for_status()
+        token_data = r.json()
+        access_token = token_data.get('access_token')
+        if not access_token:
+            return "Failed to obtain access token", 400
+
+        # Get user profile
+        headers = {'Authorization': f'Bearer {access_token}'}
+        profile_resp = httpx.get('https://openapi.naver.com/v1/nid/me', headers=headers, timeout=10.0)
+        profile_resp.raise_for_status()
+        profile = profile_resp.json()
+        user_info = profile.get('response') or {}
+        session['user'] = {
+            'id': user_info.get('id'),
+            'name': user_info.get('name'),
+            'email': user_info.get('email')
+        }
+        return redirect(url_for('main.index'))
+    except Exception as e:
+        return f"OAuth error: {e}", 500
+
+
+@bp.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('main.index'))
 
 # TMI 입력
 @bp.route('/api/add-student', methods=['POST'])

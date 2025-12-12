@@ -21,6 +21,9 @@ def create_app(config_class=None):
     
     supabase: Client = create_client(supabase_url, supabase_key)
     app.supabase = supabase
+
+    # Secret key for session (required for OAuth state storage)
+    app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key')
     
     app.register_blueprint(main_bp)
     return app
