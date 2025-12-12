@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>로그인 오류 - Fortune</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;background:#fff6f6;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+    .card{background:#fff;padding:24px;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.08);max-width:640px}
+    h2{color:#c62828}
+    .error-box{background:#ffe5e5;padding:12px;border-radius:6px;border-left:4px solid #c62828;margin:12px 0}
+    code{background:#f5f5f5;padding:4px 8px;border-radius:4px;display:block;margin:8px 0}
+    .hint{color:#666;font-size:14px;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>네이버 로그인 오류</h2>
+    <div class="error-box">
+      <strong>오류:</strong> {{ error }}
+    </div>
+    <p class="hint">다음을 확인해주세요:</p>
+    <ul>
+      <li>네이버 클라이언트 ID와 시크릿이 정확한지 확인</li>
+      <li>Redirect URI가 네이버 애플리케이션 설정과 일치하는지 확인
+        <code>{{ request.url_root }}callback</code>
+      </li>
+      <li>배포 환경의 URL이 네이버 설정의 Redirect URI와 정확히 일치하는지 확인</li>
+    </ul>
+    <p class="hint">
+      <a href="/">홈으로 돌아가기</a>
+    </p>
+  </div>
+</body>
+</html>

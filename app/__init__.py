@@ -26,8 +26,8 @@ def create_app(config_class=None):
     app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key')
 
     # Load Naver OAuth credentials from environment variable
-    app.client_id_naver = os.environ.get('CLIENT_ID_NAVER')
-    app.client_secret_naver = os.environ.get('CLIENT_SECRET_NAVER')
+    app.client_id_naver = os.environ.get('NAVER_CLIENT_ID')
+    app.client_secret_naver = os.environ.get('NAVER_CLIENT_SECRET')
     
     app.register_blueprint(main_bp)
     return app

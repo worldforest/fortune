@@ -150,9 +150,18 @@ def callback():
     if state != saved_state:
         return "Invalid state", 400
 
-    client_id = os.environ.get('NAVER_CLIENT_ID')
-    client_secret = os.environ.get('NAVER_CLIENT_SECRET')
-    redirect_uri = os.environ.get('NAVER_REDIRECT_URI')
+    # Support both naming conventions
+    client_id = os.environ.get('NAVER_CLIENT_ID') or os.environ.get('CLIENT_ID_NAVER')
+    client_secret = os.environ.get('NAVER_CLIENT_SECRET') or os.environ.get('CLIENT_SECRET_NAVER')
+    redirect_uri = os.environ.get('NAVER_REDIRECT_URI') or os.environ.get('NAVER_REDIRECT')
+    
+    if not client_id or not client_secret or not redirect_uri:
+        missing = []
+        if not client_id: missing.append('NAVER_CLIENT_ID')
+        if not client_secret: missing.append('NAVER_CLIENT_SECRET')
+        if not redirect_uri: missing.append('NAVER_REDIRECT_URI')
+        return render_template('login_error.html', missing=missing), 500
+    
     token_url = 'https://nid.naver.com/oauth2.0/token'
     params = {
         'grant_type': 'authorization_code',
@@ -167,7 +176,9 @@ def callback():
         token_data = r.json()
         access_token = token_data.get('access_token')
         if not access_token:
-            return "Failed to obtain access token", 400
+            error_msg = token_data.get('error_description', 'Unknown error')
+            print(f"Token error: {error_msg} | Response: {token_data}")
+            return render_template('oauth_error.html', error=f"토큰 획득 실패: {error_msg}"), 400
 
         # Get user profile
         headers = {'Authorization': f'Bearer {access_token}'}
@@ -182,7 +193,8 @@ def callback():
         }
         return redirect(url_for('main.index'))
     except Exception as e:
-        return f"OAuth error: {e}", 500
+        print(f"OAuth callback error: {str(e)}")
+        return render_template('oauth_error.html', error=str(e)), 500
 
 
 @bp.route('/logout')
